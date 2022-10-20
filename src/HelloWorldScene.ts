@@ -13,6 +13,51 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
+
+		class Palavra {
+			i: number
+			j: number
+			letra: string
+
+			constructor(i: number, j: number, letra: string) {
+				this.i = i
+				this.j = j
+				this.letra = letra
+			}
+		}
+
+		function generatePalavras(qtd: number) {
+
+			//BANCO DE PALAVRAS
+			const bancoPalavras: string[] = ['PLANTA', 'AREIA', 'MESA', 'PIZZA', 'GELEIA', 'CUBO', 'FUTEBOL', 'DAVID']
+			
+			const palavras = []
+
+			for (let i = 0; i<qtd; i++) {
+				// GERAR NUMERO RANDOM PARA COLUNA E LINHA
+				const rndCol = randomIntFromInterval(0,tableSize-1)
+				const rndLine = randomIntFromInterval(0,tableSize-1)
+
+				//CRIAR PALAVRA ALEATORIA
+				const rndInt = randomIntFromInterval(0,bancoPalavras.length)
+				const palavra = bancoPalavras[rndInt]
+
+				const rndX = randomIntFromInterval(0,tableSize-palavra.length)
+
+				const palavraArray: Palavra[] = []
+
+				for (let z=0; z<palavra.length; z++) {
+					const p = new Palavra(rndX+z, rndLine, palavra[z])
+					palavraArray.push(p)
+					// // PRINTAR CONTEUDO DA ARRAY
+					// const text1 = String('x: '+palavraArray[z].i+' y: '+palavraArray[z].j+' letra: '+palavraArray[z].letra)
+					// this.add.text(0,(z*15)+20,text1)
+				}
+				palavras.push(palavraArray)
+			}
+			return palavras
+		}
+
 		const { width, height } = this.scale
 
 		let tableSize = 12
@@ -33,33 +78,20 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		const letras: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
-		const palavras: string[] = ['BALA', 'AINDA', 'CRIA', 'PAPORETO']
-		const rndCol = randomIntFromInterval(0,tableSize-1)
-		const rndLine = randomIntFromInterval(0,tableSize-1)
-		const palavra = 'AINDA'
+		const palavras = generatePalavras(2)
 
 		let boxCounter = 1
 		for (let y = 0; y < tableSize; y++) {
-
-			const rndX = randomIntFromInterval(0,tableSize-palavra.length)
-			
 			for (let x = 0; x < tableSize; x++) {
 				const posX = (x * boxWidth) - (totalWidth - boxWidth) / 2
 				const posY = (y * boxHeight) - (totalHeight - boxHeight) / 2
 				
-				if (x>=rndX && x<rndX+palavra.length && y==rndLine) {
-					const palavraBox = new Box(this, posX, posY, 1, {id: boxCounter, content: palavra[x-rndX]})
+				 
+				const rndInt = randomIntFromInterval(0, letras.length-1)
+				const randomBox = new Box(this, posX, posY, 0, {id: boxCounter, content: letras[rndInt]})
 
-					boxCounter++
-					boxes.push(palavraBox)
-					
-				} else {
-					const rndInt = randomIntFromInterval(0, letras.length-1)
-					const randomBox = new Box(this, posX, posY, 0, {id: boxCounter, content: letras[rndInt]})
-
-					boxCounter++
-					boxes.push(randomBox)
-				}
+				boxCounter++
+				boxes.push(randomBox)
 			}
 		}
 
