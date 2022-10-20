@@ -29,4 +29,7 @@ export default class Box {
             [this.background, this.text]
         )
     }
+    setText(text:string) {
+        this.text.text = text
+    }
 }
