@@ -13,17 +13,35 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
+		
+		function insertPalavras(palavras: string[]) {
 
-		class Palavra {
-			i: number
-			j: number
-			letra: string
+			const lines:number[] = []
 
-			constructor(i: number, j: number, letra: string) {
-				this.i = i
-				this.j = j
-				this.letra = letra
+			//POPULAR ARRAY COM O TAMANHO DO QUADRO
+			for (let t=0; t<tableSize; t++) {
+				lines.push(t)
 			}
+
+			for (let i=0; i<palavras.length; i++) {
+				//CALCULAR LINHA ALEATORIA COM BASE NA ARRAY DE LINHAS
+				const rndLine = lines[randomIntFromInterval(0, tableSize-1-i)]
+
+				//REMOVER LINHA USADA DA ARRAY DE LINHAS
+				const index = lines.indexOf(rndLine)
+				if (index !== -1) {
+					lines.splice(index,1)
+				}
+
+				//CALCULAR COORDENADA X INICIAL ALEATORIA
+				const rndX = randomIntFromInterval(0,tableSize-palavras[i].length)
+
+				console.log(rndX)
+				for (let j=0; j<palavras[i].length;j++) {
+					boxes[rndLine][rndX+j].setText(palavras[i][j])
+				}
+			}
+
 		}
 
 		function generatePalavras(qtd: number) {
@@ -71,8 +89,6 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		const boxesContainer = this.add.container(middleX, middleY)
 
-		generatePalavras(5)
-
 		let boxCounter = 1
 		for (let y = 0; y < tableSize; y++) {
 			boxes[y] = []
@@ -82,12 +98,15 @@ export default class HelloWorldScene extends Phaser.Scene {
 				
 				 
 				const rndInt = randomIntFromInterval(0, letras.length-1)
-				const randomBox = new Box(this, posX, posY, 0, {id: boxCounter, content: letras[rndInt]})
+				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]})
 
 				boxes[y][x] = randomBox
 				boxesContainer.add(randomBox.container)
 			}
 		}
+
+		insertPalavras(generatePalavras(3))
+
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
