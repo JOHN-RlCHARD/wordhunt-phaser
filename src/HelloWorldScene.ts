@@ -13,17 +13,24 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
-		
+
 		function insertPalavras(palavras: string[]) {
 
 			const lines:number[] = []
+			const cols:number[] = []
 
-			//POPULAR ARRAY COM O TAMANHO DO QUADRO
+			//CALCULAR NUMERO DE HORIZONTAIS E VERTICAIS
+			const horizontais = Math.floor(palavras.length/2)
+			const verticais = palavras.length - horizontais
+
+			//POPULAR ARRAY DE LINHAS E COLUNAS COM O TAMANHO DO QUADRO
 			for (let t=0; t<tableSize; t++) {
 				lines.push(t)
+				cols.push(t)
 			}
 
-			for (let i=0; i<palavras.length; i++) {
+			//INSERCAO DAS PALAVRAS HORIZONTAIS
+			for (let i=0; i<horizontais; i++) {
 				//CALCULAR LINHA ALEATORIA COM BASE NA ARRAY DE LINHAS
 				const rndLine = lines[randomIntFromInterval(0, tableSize-1-i)]
 
@@ -36,9 +43,35 @@ export default class HelloWorldScene extends Phaser.Scene {
 				//CALCULAR COORDENADA X INICIAL ALEATORIA
 				const rndX = randomIntFromInterval(0,tableSize-palavras[i].length)
 
-				console.log(rndX)
+				//INSERIR PALAVRA COM AS COORDENADAS ALEATORIAS
 				for (let j=0; j<palavras[i].length;j++) {
 					boxes[rndLine][rndX+j].setText(palavras[i][j])
+				}
+
+				//REMOVER PALAVRA USADA DA ARRAY DE PALAVRAS
+				const indexPalavra = palavras.indexOf(palavras[i])
+				if (index !== -1) {
+					palavras.splice(indexPalavra,1)
+				}
+			}
+
+			//INSERCAO DAS PALAVRAS VERTICAIS
+			for (let i=0;i<verticais;i++) {
+				//CALCULAR COLUNA ALEATORIA COM BASE NA ARRAY DE COLUNAS
+				const rndCol = cols[randomIntFromInterval(0, tableSize-1-i)]
+
+				//REMOVER COLUNA USADA DA ARRAY DE LINHAS
+				const index = lines.indexOf(rndCol)
+				if (index !== -1) {
+					cols.splice(index,1)
+				}
+
+				//CALCULAR COORDENADA Y INICIAL ALEATORIA
+				const rndY = randomIntFromInterval(0,tableSize-palavras[i].length)
+
+				//INSERIR A PALAVRA COM AS COORDENADAS ALEATORIAS
+				for (let j=0; j<palavras[i].length;j++) {
+					boxes[rndY+j][rndCol].setText(palavras[i][j])
 				}
 			}
 
@@ -105,7 +138,7 @@ export default class HelloWorldScene extends Phaser.Scene {
 			}
 		}
 
-		insertPalavras(generatePalavras(3))
+		insertPalavras(generatePalavras(4))
 
 
 		function randomIntFromInterval(min, max) { // min and max included 
