@@ -57,21 +57,48 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 			//INSERCAO DAS PALAVRAS VERTICAIS
 			for (let i=0;i<verticais;i++) {
-				//CALCULAR COLUNA ALEATORIA COM BASE NA ARRAY DE COLUNAS
-				const rndCol = cols[randomIntFromInterval(0, tableSize-1-i)]
+
+				//FUNCAO QUE VERIFICA A COLISAO DE PALAVRAS
+				function checkCoords(rndCol: number, rndY: number) {
+
+					//VERIFICAR COLISAO
+					for (let j=0; j<palavras[i].length;j++) {
+						if ( boxes[rndY+j][rndCol].isRandomLetter == false ) {
+							// console.log("Boxes: "+String(boxes[rndY+j][rndCol].text.text))
+							// console.log("Palavras: "+String(palavras[i][j]))
+							if (String(boxes[rndY+j][rndCol].text.text) != String(palavras[i][j])) return true
+							// console.log("return false")
+						}
+					}
+					return false
+				}
+
+				//CALCULAR COORDENADAS ALEATORIAS
+				function calculateRandomCoords(colsRange: number) {
+					//CALCULAR COLUNA ALEATORIA COM BASE NA ARRAY DE COLUNAS
+					const rndCol = cols[randomIntFromInterval(0, colsRange)]
+					const rndY = randomIntFromInterval(0,tableSize-palavras[i].length)
+
+					return [rndCol, rndY]
+				}
+
+				let colsRange = tableSize-1-i
+
+				let rndCoords = calculateRandomCoords(colsRange)
+
+				while (checkCoords(rndCoords[0], rndCoords[1])) {
+					rndCoords = calculateRandomCoords(colsRange)
+				}
 
 				//REMOVER COLUNA USADA DA ARRAY DE LINHAS
-				const index = lines.indexOf(rndCol)
+				const index = cols.indexOf(rndCoords[0])
 				if (index !== -1) {
 					cols.splice(index,1)
 				}
 
-				//CALCULAR COORDENADA Y INICIAL ALEATORIA
-				const rndY = randomIntFromInterval(0,tableSize-palavras[i].length)
-
 				//INSERIR A PALAVRA COM AS COORDENADAS ALEATORIAS
 				for (let j=0; j<palavras[i].length;j++) {
-					boxes[rndY+j][rndCol].setText(palavras[i][j])
+					boxes[rndCoords[1]+j][rndCoords[0]].setText(palavras[i][j])
 				}
 			}
 
@@ -131,15 +158,14 @@ export default class HelloWorldScene extends Phaser.Scene {
 				
 				 
 				const rndInt = randomIntFromInterval(0, letras.length-1)
-				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]})
+				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]}, true)
 
 				boxes[y][x] = randomBox
 				boxesContainer.add(randomBox.container)
 			}
 		}
 
-		insertPalavras(generatePalavras(4))
-
+		insertPalavras(generatePalavras(6))
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)

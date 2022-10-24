@@ -5,17 +5,19 @@ export default class Box {
     boxData: BoxData
     x: number
     y: number
+    isRandomLetter: boolean
     boxColor: number
     container: Phaser.GameObjects.Container
     background: Phaser.GameObjects.Image
     backgroundCorrect: Phaser.GameObjects.Image
     text: Phaser.GameObjects.Text
 
-    constructor(scene: Phaser.Scene, x: number, y: number, boxData: BoxData) {
+    constructor(scene: Phaser.Scene, x: number, y: number, boxData: BoxData, isRandomLetter: boolean) {
         this.scene = scene
         this.x = x
         this.y = y
         this.boxData = boxData
+        this.isRandomLetter = isRandomLetter
 
         this.background = this.scene.add.image(0, 0, 'box')
         this.background.scale = 0.5
@@ -32,9 +34,11 @@ export default class Box {
             [this.background, this.backgroundCorrect, this.text]
         )
     }
+
     setText(text:string) {
         this.text.text = text 
         this.setCorrect()
+        this.isRandomLetter = false
     }
 
     setCorrect() {
