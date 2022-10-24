@@ -149,11 +149,12 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		const boxesContainer = this.add.container(middleX, middleY)
 
+		//CRIAR QUADRO COM LETRAS ALEATORIAS
 		let boxCounter = 1
 		for (let y = 0; y < tableSize; y++) {
 			boxes[y] = []
 			for (let x = 0; x < tableSize; x++) {
-				const posX = (x * boxWidth) - (totalWidth - boxWidth) / 2
+				const posX = ((x * boxWidth) - (totalWidth - boxWidth) / 2)+100
 				const posY = (y * boxHeight) - (totalHeight - boxHeight) / 2
 				
 				 
@@ -165,7 +166,15 @@ export default class HelloWorldScene extends Phaser.Scene {
 			}
 		}
 
-		insertPalavras(generatePalavras(6))
+		const palavras:string [] = generatePalavras(6)
+		
+		const palavrasCopy = palavras.slice()
+
+		insertPalavras(palavras)
+
+		for (let i=0; i<palavrasCopy.length; i++) {
+			this.add.text(20, 20+(i*15), palavrasCopy[i])
+		}
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
