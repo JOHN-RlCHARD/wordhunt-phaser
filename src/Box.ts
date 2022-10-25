@@ -15,6 +15,7 @@ export default class Box {
     //MAKE CLICKABLE
     clickArea: Phaser.GameObjects.Rectangle
     isLocked: boolean
+    isSelected: boolean
 
     constructor(scene: Phaser.Scene, x: number, y: number, boxData: BoxData, isRandomLetter: boolean) {
         this.scene = scene
@@ -31,6 +32,7 @@ export default class Box {
         this.backgroundCorrect.visible = false
 
         this.text = this.scene.add.text(0, 0, boxData.content)
+        this.text.setTint(0x000000)
 
         this.clickArea = this.scene.add.rectangle(0, 0, 40, 40, 0x000000, 0)
         this.clickArea.setInteractive()
@@ -44,7 +46,15 @@ export default class Box {
     }
 
     async select() {
-        this.isLocked = !this.isLocked
+        this.isSelected = true
+        this.isLocked = true
+        this.backgroundCorrect.visible = !this.backgroundCorrect.visible
+        this.background.visible = !this.background.visible
+    }
+
+    async clear() {
+        this.isSelected = false
+        this.isLocked = false
         this.backgroundCorrect.visible = !this.backgroundCorrect.visible
         this.background.visible = !this.background.visible
     }

@@ -3,6 +3,9 @@ import Box from './Box'
 import BoxData from './BoxData'
 
 export default class HelloWorldScene extends Phaser.Scene {
+
+	acertosText: Phaser.GameObjects.Text
+
 	constructor() {
 		super('hello-world')
 	}
@@ -13,11 +16,6 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
-		var path
-		var curve
-		var graphics
-
-		graphics = this.add.graphics()
 
 		function insertPalavras(palavras: string[]) {
 
@@ -154,6 +152,11 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		const boxesContainer = this.add.container(middleX, middleY)
 
+		let isClicked = false
+		let selectedLetters = []
+		let selectedBoxes = []
+		let acertos = 0
+
 		//CRIAR QUADRO COM LETRAS ALEATORIAS
 		let boxCounter = 1
 		for (let y = 0; y < tableSize; y++) {
@@ -167,8 +170,44 @@ export default class HelloWorldScene extends Phaser.Scene {
 				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]}, true)
 
 				boxes[y][x] = randomBox
+
 				boxes[y][x].clickArea.on('pointerdown', ()=> {
-					boxes[y][x].select()
+					if (!boxes[y][x].isLocked) {
+						boxes[y][x].select()
+						selectedLetters.push(boxes[y][x].text.text)
+						selectedBoxes.push(boxes[y][x])
+						isClicked = true
+					}
+				})
+				boxes[y][x].clickArea.on('pointerover', ()=> {
+					if (isClicked == true && !boxes[y][x].isLocked) {
+						selectedLetters.push(boxes[y][x].text.text)
+						selectedBoxes.push(boxes[y][x])
+						boxes[y][x].select()
+					}
+				})
+				boxes[y][x].clickArea.on('pointerup', ()=> {
+					let isCorrect = false
+					if (isClicked == true) {
+						isClicked = false
+						const selectedPalavra = selectedLetters.join("")
+
+						for (let i=0; i<palavras.length; i++) {
+							if (String(palavras[i])==String(selectedPalavra)) {
+								isCorrect = true
+								acertos++
+								this.acertosText.text = String("ACERTOS "+acertos+"/"+palavras.length)
+								this.add.text(40, 40+(acertos*15), palavras[i]).setTint(0x000000)
+							}
+						}
+						if (!isCorrect) {
+							for(let i=0; i<selectedBoxes.length; i++) {
+								selectedBoxes[i].clear()
+							}
+						}
+					}
+					selectedBoxes = []
+					selectedLetters = []
 				})
 				boxesContainer.add(randomBox.container)
 			}
@@ -178,9 +217,12 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		insertPalavras(palavras.slice())
 
-		for (let i=0; i<palavras.length; i++) {
-			this.add.text(20, 20+(i*15), palavras[i])
-		}
+		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+palavras.length)
+		this.acertosText.setTint(0x000000)
+
+		// for (let i=0; i<palavras.length; i++) {
+		// 	this.add.text(20, 20+(i*15), palavras[i])
+		// }
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
