@@ -13,6 +13,11 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
+		var path
+		var curve
+		var graphics
+
+		graphics = this.add.graphics()
 
 		function insertPalavras(palavras: string[]) {
 
@@ -162,18 +167,19 @@ export default class HelloWorldScene extends Phaser.Scene {
 				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]}, true)
 
 				boxes[y][x] = randomBox
+				boxes[y][x].clickArea.on('pointerdown', ()=> {
+					boxes[y][x].select()
+				})
 				boxesContainer.add(randomBox.container)
 			}
 		}
 
 		const palavras:string [] = generatePalavras(6)
-		
-		const palavrasCopy = palavras.slice()
 
-		insertPalavras(palavras)
+		insertPalavras(palavras.slice())
 
-		for (let i=0; i<palavrasCopy.length; i++) {
-			this.add.text(20, 20+(i*15), palavrasCopy[i])
+		for (let i=0; i<palavras.length; i++) {
+			this.add.text(20, 20+(i*15), palavras[i])
 		}
 
 		function randomIntFromInterval(min, max) { // min and max included 
@@ -181,3 +187,4 @@ export default class HelloWorldScene extends Phaser.Scene {
         }
 	}
 }
+
