@@ -2,12 +2,19 @@ import Phaser from 'phaser'
 import Box from './Box'
 import BoxData from './BoxData'
 
-export default class HelloWorldScene extends Phaser.Scene {
+export default class WordHuntGame extends Phaser.Scene {
 
 	acertosText: Phaser.GameObjects.Text
+	tableSize: number
+	qtdPalavras: number
+
+	init(data: number[]) {
+		this.tableSize = data[0]
+		this.qtdPalavras = data[1]
+	}
 
 	constructor() {
-		super('hello-world')
+		super('WordHunt')
 	}
 
 	preload() {
@@ -16,6 +23,9 @@ export default class HelloWorldScene extends Phaser.Scene {
 	}
 
 	create() {
+
+		const qtdPalavras = this.qtdPalavras
+		const tableSize = this.tableSize
 
 		function insertPalavras(palavras: string[]) {
 
@@ -132,7 +142,7 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 		const { width, height } = this.scale
 
-		let tableSize = 12
+		
 
 		const middleX = width / 2
 		const middleY = height / 2
@@ -226,7 +236,7 @@ export default class HelloWorldScene extends Phaser.Scene {
 			}
 		}
 
-		const palavras:string [] = generatePalavras(6)
+		const palavras:string [] = generatePalavras(qtdPalavras)
 
 		insertPalavras(palavras.slice())
 
