@@ -181,9 +181,22 @@ export default class HelloWorldScene extends Phaser.Scene {
 				})
 				boxes[y][x].clickArea.on('pointerover', ()=> {
 					if (isClicked == true && !boxes[y][x].isLocked) {
+						
 						selectedLetters.push(boxes[y][x].text.text)
 						selectedBoxes.push(boxes[y][x])
 						boxes[y][x].select()
+
+						if (boxes[y][x].x < selectedBoxes[0].x 
+							|| boxes[y][x].y < selectedBoxes[0].y 
+							|| (
+								boxes[y][x].x != selectedBoxes[0].x 
+								&& boxes[y][x].y != selectedBoxes[0].y
+							) ) {
+							for(let i=0; i<selectedBoxes.length; i++) {
+								selectedBoxes[i].clear()
+							}
+						selectedBoxes = []
+						}
 					}
 				})
 				boxes[y][x].clickArea.on('pointerup', ()=> {
