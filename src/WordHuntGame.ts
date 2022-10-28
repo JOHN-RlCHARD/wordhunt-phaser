@@ -4,6 +4,7 @@ import Box from './Box'
 export default class WordHuntGame extends Phaser.Scene {
 
 	acertosText: Phaser.GameObjects.Text
+	palavrasText: Phaser.GameObjects.Text[] = []
 	tableSize: number
 	qtdPalavras: number
 
@@ -167,7 +168,6 @@ export default class WordHuntGame extends Phaser.Scene {
 		let acertos = 0
 
 		//CRIAR QUADRO COM LETRAS ALEATORIAS
-		let boxCounter = 1
 		for (let y = 0; y < tableSize; y++) {
 			boxes[y] = []
 			for (let x = 0; x < tableSize; x++) {
@@ -210,9 +210,12 @@ export default class WordHuntGame extends Phaser.Scene {
 								&& boxes[y][x].y != selectedBoxes[0].y
 							) ) {
 							for(let i=0; i<selectedBoxes.length; i++) {
-								selectedBoxes[i].clear()
+								if (!selectedBoxes[i].isLocked) {
+									selectedBoxes[i].clear()
+								}
 							}
 							selectedBoxes = []
+							isClicked = false
 						}
 					}
 				})
@@ -220,19 +223,23 @@ export default class WordHuntGame extends Phaser.Scene {
 					let isCorrect = false
 					if (isClicked == true) {
 						isClicked = false
+
 						const selectedPalavra = selectedLetters.join("")
 
 						for (let i=0; i<palavras.length; i++) {
 							if (String(palavras[i])==String(selectedPalavra)) {
 								isCorrect = true
 								acertos++
-								this.acertosText.text = String("ACERTOS "+acertos+"/"+palavras.length)
-								this.add.text(40, 40+(acertos*15), palavras[i]).setTint(0x000000)
+								if (acertos == qtdPalavras) this.acertosText.setTint(0x00FF00)
+								this.acertosText.text = String("ACERTOS "+acertos+"/"+qtdPalavras)
+								this.palavrasText[i].setTint(0x00FF00)
 
-								const index = palavras.indexOf(palavras[i])
-								if (index !== -1) {
-									palavras.splice(index,1)
-								}
+								palavras[i] = "1"
+
+								// const index = palavras.indexOf(palavras[i])
+								// if (index !== -1) {
+								// 	palavras.splice(index,1)
+								// }
 
 							}
 						}
@@ -257,11 +264,16 @@ export default class WordHuntGame extends Phaser.Scene {
 		}
 
 		const palavras:string [] = generatePalavras(qtdPalavras)
+		const palavrasClone = palavras.slice()
 
 		insertPalavras(palavras.slice())
 
-		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+palavras.slice().length)
+		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+qtdPalavras)
 		this.acertosText.setTint(0x000000)
+
+		for (let i=0; i<palavrasClone.length; i++) {
+			this.palavrasText[i] = this.add.text(40, 60+(i*15), palavrasClone[i]).setTint(0x000000)
+		}
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)

@@ -13,7 +13,7 @@ export default class GameModeSelect extends Phaser.Scene {
     const middleX = width / 2
     const middleY = height / 2
 
-    const background = this.add.rectangle(middleX, middleY, width, height, 0x999999)
+    const background = this.add.rectangle(middleX, middleY, width, height, 0x000000)
     background.setDepth(-1)
 
     this.start()
