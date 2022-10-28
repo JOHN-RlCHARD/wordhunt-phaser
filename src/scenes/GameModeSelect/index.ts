@@ -40,15 +40,15 @@ export default class GameModeSelect extends Phaser.Scene {
 
 
     buttonFacil.on('pointerdown', () => {
-        this.scene.start('WordHunt', [7,3])
+        this.scene.start('WordHunt', { tableSize: 8, qtdPalavras: 3})
         this.scene.stop()
     })
     buttonMedio.on('pointerdown', () => {
-        this.scene.start('WordHunt', [10,5])
+        this.scene.start('WordHunt', { tableSize: 10, qtdPalavras: 5})
         this.scene.stop()
     })
     buttonDificil.on('pointerdown', () => {
-        this.scene.start('WordHunt', [13,7])
+        this.scene.start('WordHunt', { tableSize: 13, qtdPalavras: 7})
         this.scene.stop()
     })
 

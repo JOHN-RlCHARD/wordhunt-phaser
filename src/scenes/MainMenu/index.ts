@@ -4,7 +4,6 @@ export default class MainMenu extends Phaser.Scene {
     }
   
     preload() {
-      this.load.image('logo', 'assets/prince.jpg')
     }
   
     create() {

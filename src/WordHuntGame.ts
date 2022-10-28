@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import Box from './Box'
-import BoxData from './BoxData'
 
 export default class WordHuntGame extends Phaser.Scene {
 
@@ -8,9 +7,9 @@ export default class WordHuntGame extends Phaser.Scene {
 	tableSize: number
 	qtdPalavras: number
 
-	init(data: number[]) {
-		this.tableSize = data[0]
-		this.qtdPalavras = data[1]
+	init(data: { tableSize: number, qtdPalavras: number }) {
+		this.tableSize = data.tableSize
+		this.qtdPalavras = data.qtdPalavras
 	}
 
 	constructor() {
@@ -177,20 +176,28 @@ export default class WordHuntGame extends Phaser.Scene {
 				
 				 
 				const rndInt = randomIntFromInterval(0, letras.length-1)
-				const randomBox = new Box(this, posX, posY, {id: boxCounter, content: letras[rndInt]}, true)
+				const randomBox = new Box(this, posX, posY,  letras[rndInt], true)
 
 				boxes[y][x] = randomBox
 
 				boxes[y][x].clickArea.on('pointerdown', ()=> {
-					if (!boxes[y][x].isLocked) {
+					if (isClicked) {
+						for(let i=0; i<selectedBoxes.length; i++) {
+							selectedBoxes[i].clear()
+						}
+						selectedBoxes = []
+						isClicked = false
+						return
+					} else {
 						boxes[y][x].select()
 						selectedLetters.push(boxes[y][x].text.text)
 						selectedBoxes.push(boxes[y][x])
 						isClicked = true
 					}
+					
 				})
 				boxes[y][x].clickArea.on('pointerover', ()=> {
-					if (isClicked == true && !boxes[y][x].isLocked) {
+					if (isClicked) {
 						
 						selectedLetters.push(boxes[y][x].text.text)
 						selectedBoxes.push(boxes[y][x])
@@ -205,7 +212,7 @@ export default class WordHuntGame extends Phaser.Scene {
 							for(let i=0; i<selectedBoxes.length; i++) {
 								selectedBoxes[i].clear()
 							}
-						selectedBoxes = []
+							selectedBoxes = []
 						}
 					}
 				})
@@ -221,11 +228,24 @@ export default class WordHuntGame extends Phaser.Scene {
 								acertos++
 								this.acertosText.text = String("ACERTOS "+acertos+"/"+palavras.length)
 								this.add.text(40, 40+(acertos*15), palavras[i]).setTint(0x000000)
+
+								const index = palavras.indexOf(palavras[i])
+								if (index !== -1) {
+									palavras.splice(index,1)
+								}
+
 							}
 						}
 						if (!isCorrect) {
 							for(let i=0; i<selectedBoxes.length; i++) {
-								selectedBoxes[i].clear()
+								if (!selectedBoxes[i].isLocked) {
+									console.log(selectedBoxes[i].letra+" "+selectedBoxes[i].isLocked)
+									selectedBoxes[i].clear()
+								}
+							}
+						} else {
+							for (let i=0; i<selectedBoxes.length;i++){
+								selectedBoxes[i].isLocked = true
 							}
 						}
 					}
@@ -240,12 +260,8 @@ export default class WordHuntGame extends Phaser.Scene {
 
 		insertPalavras(palavras.slice())
 
-		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+palavras.length)
+		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+palavras.slice().length)
 		this.acertosText.setTint(0x000000)
-
-		// for (let i=0; i<palavras.length; i++) {
-		// 	this.add.text(20, 20+(i*15), palavras[i])
-		// }
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
