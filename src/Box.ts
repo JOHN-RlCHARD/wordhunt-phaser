@@ -9,6 +9,7 @@ export default class Box {
     background: Phaser.GameObjects.Image
     backgroundCorrect: Phaser.GameObjects.Image
     text: Phaser.GameObjects.Text
+    animation: Phaser.GameObjects.Sprite
 
     //MAKE CLICKABLE
     clickArea: Phaser.GameObjects.Rectangle
@@ -23,23 +24,35 @@ export default class Box {
         this.letra = letra
 
         this.background = this.scene.add.image(0, 0, 'box')
-        this.background.scale = 0.5
+        this.background.scale = 0.86
 
         this.backgroundCorrect = this.scene.add.image(0, 0, 'boxRed')
-        this.backgroundCorrect.scale = 0.5
+        this.backgroundCorrect.scale = 0.86
         this.backgroundCorrect.visible = false
 
-        this.text = this.scene.add.text(0, 0, letra)
+        this.text = this.scene.add.text(-5, -7, letra, { fontFamily: 'Roboto' })
         this.text.setTint(0x000000)
 
         this.clickArea = this.scene.add.rectangle(0, 0, 40, 40, 0x000000, 0)
         this.clickArea.setInteractive()
         this.isLocked = false
 
+        this.animation = this.scene.add.sprite(0, 0, 'correct')
+        this.animation.scale = 0.86
+        this.animation.visible = false
+        this.animation.setDepth(100)
+		
+		this.scene.anims.create({
+			key: 'correct_anim',
+			frames: this.scene.anims.generateFrameNames('correct'),
+			frameRate: 12,
+			repeat: 0,
+		})
+
         this.container = this.scene.add.container(
             this.x,
             this.y,
-            [this.background, this.backgroundCorrect, this.text, this.clickArea]
+            [this.background, this.backgroundCorrect, this.animation, this.text, this.clickArea]
         )
     }
 

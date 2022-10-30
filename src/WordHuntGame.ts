@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import Box from './Box'
+import CountdownController from './Timer'
 
 export default class WordHuntGame extends Phaser.Scene {
 
@@ -7,6 +8,7 @@ export default class WordHuntGame extends Phaser.Scene {
 	palavrasText: Phaser.GameObjects.Text[] = []
 	tableSize: number
 	qtdPalavras: number
+	bg: Phaser.GameObjects.Sprite
 
 	init(data: { tableSize: number, qtdPalavras: number }) {
 		this.tableSize = data.tableSize
@@ -18,8 +20,77 @@ export default class WordHuntGame extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image('box', 'assets/rect.jpg')
-		this.load.image('boxRed', 'assets/rect_red.jpg')
+		var progressBar = this.add.graphics();
+		var progressBox = this.add.graphics();
+		progressBox.fillStyle(0x222222, 0.8);
+		progressBox.fillRect(600-180, 360-25, 320, 50);
+
+		var width = this.cameras.main.width;
+		var height = this.cameras.main.height;
+		var loadingText = this.make.text({
+			x: width / 2,
+			y: height / 2 - 50,
+			text: 'Loading...',
+			style: {
+				font: '20px monospace',
+			}
+		});
+		loadingText.setOrigin(0.5, 0.5);
+
+		var percentText = this.make.text({
+			x: width / 2,
+			y: height / 2 - 5,
+			text: '0%',
+			style: {
+				font: '18px monospace',
+			}
+		});
+		percentText.setOrigin(0.5, 0.2);
+
+
+		this.load.image('box', 'assets/rect.png')
+		this.load.image('boxRed', 'assets/rect_red.png')
+		//this.load.image('bg', 'assets/bg.gif')
+		this.load.spritesheet('bg', 'assets/spritesheet_bg.png', {
+			frameWidth: 1280,
+			frameHeight: 720
+		})
+
+		this.bg = this.add.sprite(600, 360, 'bg')
+		this.bg.scale = 1
+		this.bg.setDepth(-1)
+
+		this.anims.create({
+			key: 'bg_anim',
+			frames: this.anims.generateFrameNames('bg'),
+			frameRate: 8,
+			repeat: -1
+		})
+
+		this.bg.play('bg_anim')		
+
+		this.load.spritesheet('correct', 'assets/spritesheet_correct.png', {
+			frameWidth: 53,
+			frameHeight: 53
+		})
+		this.load.on('progress', function (value) {
+			console.log(value);
+			percentText.setText(parseInt((value * 100).toString()) + '%');
+			progressBar.clear();
+			progressBar.fillStyle(0xffffff, 1);
+			progressBar.fillRect(600-150, 360-15, 300 * value, 30);
+		});
+					
+		this.load.on('fileprogress', function (file) {
+			console.log(file.src);
+		});
+		this.load.on('complete', function () {
+			console.log('complete');
+			progressBar.destroy();
+			progressBox.destroy();
+			loadingText.destroy();
+			percentText.destroy();
+		});
 	}
 
 	create() {
@@ -153,14 +224,11 @@ export default class WordHuntGame extends Phaser.Scene {
 		const totalWidth = tableSize * boxWidth
     	const totalHeight = tableSize * boxHeight
 
-		const background = this.add.rectangle(middleX, middleY, width, height, 0x999999)
-    	background.setDepth(-1)
-
 		const boxes: Box[][] = [[]]
 
 		const letras: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
 
-		const boxesContainer = this.add.container(middleX, middleY)
+		const boxesContainer = this.add.container(middleX+100, middleY)
 
 		let isClicked = false
 		let selectedLetters = []
@@ -171,7 +239,7 @@ export default class WordHuntGame extends Phaser.Scene {
 		for (let y = 0; y < tableSize; y++) {
 			boxes[y] = []
 			for (let x = 0; x < tableSize; x++) {
-				const posX = ((x * boxWidth) - (totalWidth - boxWidth) / 2)+100
+				const posX = ((x * boxWidth) - (totalWidth - boxWidth) / 2)
 				const posY = (y * boxHeight) - (totalHeight - boxHeight) / 2
 				
 				 
@@ -230,11 +298,23 @@ export default class WordHuntGame extends Phaser.Scene {
 							if (String(palavras[i])==String(selectedPalavra)) {
 								isCorrect = true
 								acertos++
-								if (acertos == qtdPalavras) this.acertosText.setTint(0x00FF00)
+								if (acertos == qtdPalavras) this.acertosText.setTint(0x76E072)
 								this.acertosText.text = String("ACERTOS "+acertos+"/"+qtdPalavras)
-								this.palavrasText[i].setTint(0x00FF00)
+								this.palavrasText[i].setTint(0x76E072)
 
 								palavras[i] = "1"
+
+								let delay = 0
+
+								for(let i=0; i<selectedBoxes.length; i++) {
+									if (!selectedBoxes[i].isLocked) {
+										selectedBoxes[i].animation.visible = true
+										selectedBoxes[i].animation.playAfterDelay('correct_anim',delay)
+
+										delay = i + i*200
+										
+									}
+								}
 
 								// const index = palavras.indexOf(palavras[i])
 								// if (index !== -1) {
@@ -246,7 +326,6 @@ export default class WordHuntGame extends Phaser.Scene {
 						if (!isCorrect) {
 							for(let i=0; i<selectedBoxes.length; i++) {
 								if (!selectedBoxes[i].isLocked) {
-									console.log(selectedBoxes[i].letra+" "+selectedBoxes[i].isLocked)
 									selectedBoxes[i].clear()
 								}
 							}
@@ -268,16 +347,53 @@ export default class WordHuntGame extends Phaser.Scene {
 
 		insertPalavras(palavras.slice())
 
-		this.acertosText = this.add.text(40, 40, "ACERTOS "+acertos+"/"+qtdPalavras)
-		this.acertosText.setTint(0x000000)
+		this.acertosText = this.add.text(middleX - 400, middleY-140, "ACERTOS "+acertos+"/"+qtdPalavras, {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
+		this.acertosText.setTint(0xFCE9ED)
 
 		for (let i=0; i<palavrasClone.length; i++) {
-			this.palavrasText[i] = this.add.text(40, 60+(i*15), palavrasClone[i]).setTint(0x000000)
+			this.palavrasText[i] = this.add.text(middleX - 400, middleY-100+(i*30), palavrasClone[i], {fontFamily: 'Roboto', fontSize: '20px', stroke: '#4C3641', strokeThickness: 4}).setTint(0xFCE9ED)
 		}
 
 		function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
         }
+
+		var correct
+		if (tableSize==8) correct = correct = 70
+		if (tableSize==10) correct = correct = 110
+		if (tableSize==13) correct = correct = 170
+
+		this.timer=this.add.text(middleX+100-(tableSize*40)/2+correct,middleY-(tableSize*40)/2-50,'TEMPO: ', {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
+		this.startTime = this.time.now
 	}
+	startTime: number
+	timer: Phaser.GameObjects.Text
+	update(time: number, delta: number): void {
+		var seconds = time * 0.001
+		var start = this.startTime * 0.001
+		this.timer.setText('TEMPO: '+this.formatTime(String(seconds-start)))
+	}
+
+	formatTime(seconds){
+		// Minutes
+		var minutes = Math.floor(seconds/60);
+		// Seconds
+		var partInSeconds = (seconds%60).toString();
+		var partInSecondsNumber = (seconds%60)
+		// Adds left zeros to seconds
+		partInSeconds = partInSeconds.toString().padStart(2,'0');
+
+		
+
+		if (partInSecondsNumber < 10) {
+			partInSeconds = partInSeconds.substring(0,1)
+			return `${minutes}:0${partInSeconds}`;
+		}
+
+		partInSeconds = partInSeconds.substring(0,2)
+		// Returns formated time
+		return `${minutes}:${partInSeconds}`;
+	}
+	
 }
 

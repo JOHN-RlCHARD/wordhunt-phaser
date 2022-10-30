@@ -1,10 +1,18 @@
 export default class GameModeSelect extends Phaser.Scene {
 
+  bg: Phaser.GameObjects.Sprite
+
   constructor() {
     super('GameModeSelect')
   }
 
-  preload() {}
+  preload() {
+    this.load.image('button', 'assets/button.png')
+    this.load.spritesheet('bg', 'assets/spritesheet_bg.png', {
+      frameWidth: 1280,
+      frameHeight: 720
+    })
+  }
 
   create() {
 
@@ -26,17 +34,17 @@ export default class GameModeSelect extends Phaser.Scene {
     const middleX = width / 2
     const middleY = height / 2
 
-    const buttonFacil = this.add.rectangle(middleX, middleY - 150, 240, 50, 0x888888, 0.5)
+    const buttonFacil = this.add.image(middleX, middleY - 150, 'button')
     buttonFacil.setInteractive()
-    this.add.text(middleX, middleY - 150, 'Facil', { fontSize: '32px', color: '#fff' }).setOrigin(0.5)
+    this.add.text(middleX, middleY - 153, 'Facil', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
 
-    const buttonMedio = this.add.rectangle(middleX, middleY - 50, 240, 50, 0x888888, 0.5)
+    const buttonMedio = this.add.image(middleX, middleY - 50, 'button')
     buttonMedio.setInteractive()
-    this.add.text(middleX, middleY - 50, 'Medio', { fontSize: '32px', color: '#fff' }).setOrigin(0.5)
+    this.add.text(middleX, middleY - 53, 'Medio', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
 
-    const buttonDificil = this.add.rectangle(middleX, middleY + 50, 240, 50, 0x888888, 0.5)
+    const buttonDificil = this.add.image(middleX, middleY + 50, 'button')
     buttonDificil.setInteractive()
-    this.add.text(middleX, middleY + 50, 'Dificil', { fontSize: '32px', color: '#fff' }).setOrigin(0.5)
+    this.add.text(middleX, middleY + 47, 'Dificil', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
 
 
     buttonFacil.on('pointerdown', () => {
@@ -51,6 +59,17 @@ export default class GameModeSelect extends Phaser.Scene {
         this.scene.start('WordHunt', { tableSize: 13, qtdPalavras: 7})
         this.scene.stop()
     })
+    this.bg = this.add.sprite(middleX, middleY, 'bg')
+    this.bg.scale = 1
+    this.bg.setDepth(-1)
 
+    this.anims.create({
+      key: 'bg_anim',
+      frames: this.anims.generateFrameNames('bg'),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    this.bg.play('bg_anim')
   }
 }
