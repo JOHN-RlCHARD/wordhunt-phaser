@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import Box from './Box'
-import CountdownController from './Timer'
+import { formatTime } from './formatTime'
 
 export default class WordHuntGame extends Phaser.Scene {
 
@@ -9,6 +9,7 @@ export default class WordHuntGame extends Phaser.Scene {
 	tableSize: number
 	qtdPalavras: number
 	bg: Phaser.GameObjects.Sprite
+	timer: Phaser.GameObjects.Text
 
 	init(data: { tableSize: number, qtdPalavras: number }) {
 		this.tableSize = data.tableSize
@@ -358,42 +359,34 @@ export default class WordHuntGame extends Phaser.Scene {
             return Math.floor(Math.random() * (max - min + 1) + min)
         }
 
+		// TIMER POSITION
 		var correct
 		if (tableSize==8) correct = correct = 70
 		if (tableSize==10) correct = correct = 110
 		if (tableSize==13) correct = correct = 170
 
-		this.timer=this.add.text(middleX+100-(tableSize*40)/2+correct,middleY-(tableSize*40)/2-50,'TEMPO: ', {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
-		this.startTime = this.time.now
-	}
-	startTime: number
-	timer: Phaser.GameObjects.Text
-	update(time: number, delta: number): void {
-		var seconds = time * 0.001
-		var start = this.startTime * 0.001
-		this.timer.setText('TEMPO: '+this.formatTime(String(seconds-start)))
-	}
+		//TIMER
+		this.timer=this.add.text(middleX+100-(tableSize*40)/2+correct,middleY-(tableSize*40)/2-50,'TEMPO: 0:00', {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
+		// this.startTime = this.time.now
 
-	formatTime(seconds){
-		// Minutes
-		var minutes = Math.floor(seconds/60);
-		// Seconds
-		var partInSeconds = (seconds%60).toString();
-		var partInSecondsNumber = (seconds%60)
-		// Adds left zeros to seconds
-		partInSeconds = partInSeconds.toString().padStart(2,'0');
+		let timeTaken = 0
 
-		
+		const timeout = () => {
+			if (acertos<palavrasClone.length) {
+			  timeTaken += 1
+	  
+			  this.timer.setText('TEMPO: '+formatTime(String(timeTaken)))
+			// this.timer.text = `Tempo: ${timeTaken}`
+	  
+			  setTimeout(timeout, 1000)
+			} else {
+				this.scene.start('EndGame', {tempo: timeTaken})
+			}
+		  }
+		setTimeout(timeout, 1000) 
 
-		if (partInSecondsNumber < 10) {
-			partInSeconds = partInSeconds.substring(0,1)
-			return `${minutes}:0${partInSeconds}`;
-		}
-
-		partInSeconds = partInSeconds.substring(0,2)
-		// Returns formated time
-		return `${minutes}:${partInSeconds}`;
 	}
 	
 }
+
 
