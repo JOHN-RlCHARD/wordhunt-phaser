@@ -222,8 +222,8 @@ export default class WordHuntGame extends Phaser.Scene {
 		const middleX = width / 2
 		const middleY = height / 2
 
-		const boxWidth = 40
-		const boxHeight = 40
+		const boxWidth = 30
+		const boxHeight = 30
 
 		const totalWidth = tableSize * boxWidth
     	const totalHeight = tableSize * boxHeight
@@ -312,8 +312,6 @@ export default class WordHuntGame extends Phaser.Scene {
 
 						const selectedPalavra = selectedLetters.join("")
 
-						this.add.text(20, 20, selectedPalavra, {fontFamily: 'Roboto', fontSize: '50px', strokeThickness: 4, stroke: '#4C3641'})
-
 						for (let i=0; i<palavras.length; i++) {
 							if (String(palavras[i])==String(selectedPalavra)) {
 								isCorrect = true
@@ -347,9 +345,6 @@ export default class WordHuntGame extends Phaser.Scene {
 							for(let i=0; i<selectedBoxes.length; i++) {
 								if (!selectedBoxes[i].isLocked) {
 									selectedBoxes[i].clear()
-
-									this.add.text(100, 100, selectedBoxes.length.toString(), {fontFamily: 'Roboto', fontSize: '50px', strokeThickness: 4, stroke: '#4C3641'})
-									
 								}
 							}
 						} else {
@@ -372,11 +367,11 @@ export default class WordHuntGame extends Phaser.Scene {
 
 		insertPalavras(palavras.slice())
 
-		this.acertosText = this.add.text(middleX - 400, middleY-140, "ACERTOS "+acertos+"/"+qtdPalavras, {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
+		this.acertosText = this.add.text(middleX - 350, middleY-140, "ACERTOS "+acertos+"/"+qtdPalavras, {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
 		this.acertosText.setTint(0xFCE9ED)
 
 		for (let i=0; i<palavrasClone.length; i++) {
-			this.palavrasText[i] = this.add.text(middleX - 400, middleY-100+(i*30), palavrasClone[i], {fontFamily: 'Roboto', fontSize: '20px', stroke: '#4C3641', strokeThickness: 4}).setTint(0xFCE9ED)
+			this.palavrasText[i] = this.add.text(middleX - 350, middleY-100+(i*30), palavrasClone[i], {fontFamily: 'Roboto', fontSize: '20px', stroke: '#4C3641', strokeThickness: 4}).setTint(0xFCE9ED)
 		}
 
 		function randomIntFromInterval(min, max) { // min and max included 
@@ -390,7 +385,7 @@ export default class WordHuntGame extends Phaser.Scene {
 		if (tableSize==13) correct = correct = 170
 
 		//TIMER
-		this.timer=this.add.text(middleX+100-(tableSize*40)/2+correct,middleY-(tableSize*40)/2-50,'TEMPO: 0:00', {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
+		this.timer=this.add.text(middleX+100-(tableSize*40)/2+correct,middleY-(tableSize*28)/2-50,'TEMPO: 0:00', {fontFamily: 'Roboto', fontSize: '30px', strokeThickness: 4, stroke: '#4C3641'})
 		// this.startTime = this.time.now
 
 		let timeTaken = 0

@@ -24,10 +24,10 @@ export default class Box {
         this.letra = letra
 
         this.background = this.scene.add.image(0, 0, 'box')
-        this.background.scale = 0.86
+        this.background.scale = 0.645
 
         this.backgroundCorrect = this.scene.add.image(0, 0, 'boxRed')
-        this.backgroundCorrect.scale = 0.86
+        this.backgroundCorrect.scale = 0.645
         this.backgroundCorrect.visible = false
 
         this.text = this.scene.add.text(-5, -7, letra, { fontFamily: 'Roboto' })
@@ -38,7 +38,7 @@ export default class Box {
         this.isLocked = false
 
         this.animation = this.scene.add.sprite(0, 0, 'correct')
-        this.animation.scale = 0.86
+        this.animation.scale = 0.645
         this.animation.visible = false
         this.animation.setDepth(100)
 		
