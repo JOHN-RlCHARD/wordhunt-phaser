@@ -9,8 +9,8 @@ export default class GameModeSelect extends Phaser.Scene {
   preload() {
     this.load.image('button', 'assets/button.png')
     this.load.spritesheet('bg', 'assets/spritesheet_bg.png', {
-      frameWidth: 1280,
-      frameHeight: 720
+      frameWidth: 640,
+      frameHeight: 360
     })
   }
 
@@ -60,7 +60,7 @@ export default class GameModeSelect extends Phaser.Scene {
         this.scene.stop()
     })
     this.bg = this.add.sprite(middleX, middleY, 'bg')
-    this.bg.scale = 1
+    this.bg.scale = 1.3333333
     this.bg.setDepth(-1)
 
     this.anims.create({

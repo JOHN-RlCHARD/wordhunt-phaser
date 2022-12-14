@@ -4,12 +4,10 @@ import GameModeSelect from './scenes/GameModeSelect'
 import MainMenu from './scenes/MainMenu'
 import WordHuntGame from './WordHuntGame'
 
-import HelloWorldScene from './WordHuntGame'
-
 const config = {
 	type: Phaser.AUTO,
-	width: 1200,
-	height: 720,
+	width: 854,
+	height: 480,
 	scene: [MainMenu, GameModeSelect, WordHuntGame, EndGame],
 }
 

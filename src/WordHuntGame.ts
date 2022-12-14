@@ -53,12 +53,15 @@ export default class WordHuntGame extends Phaser.Scene {
 		this.load.image('boxRed', 'assets/rect_red.png')
 		//this.load.image('bg', 'assets/bg.gif')
 		this.load.spritesheet('bg', 'assets/spritesheet_bg.png', {
-			frameWidth: 1280,
-			frameHeight: 720
+			frameWidth: 640,
+			frameHeight: 360
 		})
 
-		this.bg = this.add.sprite(600, 360, 'bg')
-		this.bg.scale = 1
+		const middleX = width / 2
+      	const middleY = height / 2
+
+		this.bg = this.add.sprite(middleX, middleY, 'bg')
+		this.bg.scale = 1.3333333
 		this.bg.setDepth(-1)
 
 		this.anims.create({
@@ -250,19 +253,28 @@ export default class WordHuntGame extends Phaser.Scene {
 				boxes[y][x] = randomBox
 
 				boxes[y][x].clickArea.on('pointerdown', ()=> {
-					if (isClicked) {
-						for(let i=0; i<selectedBoxes.length; i++) {
-							selectedBoxes[i].clear()
-						}
-						selectedBoxes = []
-						isClicked = false
-						return
-					} else {
+					// if (isClicked) 
+					
+						// for(let i=0; i<selectedBoxes.length; i++) {
+						// 	selectedBoxes[i].clear()
+						// }
+						// selectedBoxes = []
+						// isClicked = false
+					
+					
+					// else 
+					
 						boxes[y][x].select()
 						selectedLetters.push(boxes[y][x].text.text)
 						selectedBoxes.push(boxes[y][x])
 						isClicked = true
-					}
+
+						if(selectedLetters[0].toString()==selectedLetters[1].toString()) {
+							selectedLetters.pop()
+						}
+					
+
+					
 					
 				})
 				boxes[y][x].clickArea.on('pointerover', ()=> {
@@ -271,6 +283,11 @@ export default class WordHuntGame extends Phaser.Scene {
 						selectedLetters.push(boxes[y][x].text.text)
 						selectedBoxes.push(boxes[y][x])
 						boxes[y][x].select()
+
+						if(selectedLetters[0].toString()==selectedLetters[1].toString()) {
+							selectedLetters.pop()
+							selectedBoxes.pop()
+						}
 
 						if (boxes[y][x].x < selectedBoxes[0].x 
 							|| boxes[y][x].y < selectedBoxes[0].y 
@@ -294,6 +311,8 @@ export default class WordHuntGame extends Phaser.Scene {
 						isClicked = false
 
 						const selectedPalavra = selectedLetters.join("")
+
+						this.add.text(20, 20, selectedPalavra, {fontFamily: 'Roboto', fontSize: '50px', strokeThickness: 4, stroke: '#4C3641'})
 
 						for (let i=0; i<palavras.length; i++) {
 							if (String(palavras[i])==String(selectedPalavra)) {
@@ -328,14 +347,19 @@ export default class WordHuntGame extends Phaser.Scene {
 							for(let i=0; i<selectedBoxes.length; i++) {
 								if (!selectedBoxes[i].isLocked) {
 									selectedBoxes[i].clear()
+
+									this.add.text(100, 100, selectedBoxes.length.toString(), {fontFamily: 'Roboto', fontSize: '50px', strokeThickness: 4, stroke: '#4C3641'})
+									
 								}
 							}
 						} else {
 							for (let i=0; i<selectedBoxes.length;i++){
 								selectedBoxes[i].isLocked = true
+								
 							}
 						}
 					}
+					
 					selectedBoxes = []
 					selectedLetters = []
 				})
