@@ -8,6 +8,11 @@ const config = {
 	type: Phaser.AUTO,
 	width: 854,
 	height: 480,
+	scale: {
+		parent: 'game',
+		autoCenter: Phaser.Scale.CENTER_BOTH,
+		//mode: Phaser.Scale.RESIZE,
+	},
 	scene: [MainMenu, GameModeSelect, WordHuntGame, EndGame],
 }
 

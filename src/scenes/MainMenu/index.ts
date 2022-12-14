@@ -8,6 +8,12 @@ export default class MainMenu extends Phaser.Scene {
     preload() {
       this.load.audio('phonky_tribu', ['assets/phonky_tribu.mp3'])
       this.load.image('button', 'assets/button.png')
+      this.load.spritesheet(
+        'buttons', 'assets/buttons.png', {
+          frameWidth: 124,
+          frameHeight: 40
+        }
+      )
       this.load.spritesheet('bg', 'assets/spritesheet_bg.png', {
         frameWidth: 640,
         frameHeight: 360
@@ -24,17 +30,17 @@ export default class MainMenu extends Phaser.Scene {
       const middleX = width / 2
       const middleY = height / 2
   
-      const button = this.add.image(middleX, middleY - 25, 'button')
+      const button = this.add.sprite(middleX, middleY-(20*1.2), 'buttons', 0)
+      button.scale = 1.6
       button.setInteractive()
-      this.add.text(middleX, middleY - 29, 'Iniciar', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto'}).setOrigin(0.5)
-  
+
       button.on('pointerdown', () => {
         this.scene.start('GameModeSelect')
         this.scene.stop()
       })
 
       this.bg = this.add.sprite(middleX, middleY, 'bg')
-      this.bg.scale = 1.3333333
+      this.bg.scale = 1.35
       this.bg.setDepth(-1)
 
       this.anims.create({

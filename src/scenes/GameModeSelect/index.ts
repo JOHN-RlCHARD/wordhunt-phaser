@@ -12,6 +12,12 @@ export default class GameModeSelect extends Phaser.Scene {
       frameWidth: 640,
       frameHeight: 360
     })
+    this.load.spritesheet(
+      'buttons', 'assets/buttons.png', {
+        frameWidth: 124,
+        frameHeight: 40
+      }
+    )
   }
 
   create() {
@@ -34,18 +40,17 @@ export default class GameModeSelect extends Phaser.Scene {
     const middleX = width / 2
     const middleY = height / 2
 
-    const buttonFacil = this.add.image(middleX, middleY - 150, 'button')
+    const buttonFacil = this.add.sprite(middleX, middleY-(80*1.2), 'buttons', 1)
+    buttonFacil.scale = 1.6
     buttonFacil.setInteractive()
-    this.add.text(middleX, middleY - 153, 'Facil', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
 
-    const buttonMedio = this.add.image(middleX, middleY - 50, 'button')
+    const buttonMedio = this.add.sprite(middleX, middleY-(20*1.2), 'buttons', 2)
+    buttonMedio.scale = 1.6
     buttonMedio.setInteractive()
-    this.add.text(middleX, middleY - 53, 'Medio', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
 
-    const buttonDificil = this.add.image(middleX, middleY + 50, 'button')
+    const buttonDificil = this.add.sprite(middleX, middleY+(40*1.2), 'buttons', 3)
+    buttonDificil.scale = 1.6
     buttonDificil.setInteractive()
-    this.add.text(middleX, middleY + 47, 'Dificil', { fontSize: '32px', color: '#fff', fontFamily: 'Roboto' }).setOrigin(0.5)
-
 
     buttonFacil.on('pointerdown', () => {
         this.scene.start('WordHunt', { tableSize: 8, qtdPalavras: 3})
